@@ -1,0 +1,736 @@
+Program.Sub.ScreenSU.Start
+Gui.frmQuickRouter..Create
+Gui.frmQuickRouter..Caption("Quick Router Entry")
+Gui.frmQuickRouter..Size(15330,12975)
+Gui.frmQuickRouter..MinX(0)
+Gui.frmQuickRouter..MinY(0)
+Gui.frmQuickRouter..Position(0,0)
+Gui.frmQuickRouter..BackColor(-2147483633)
+Gui.frmQuickRouter..MousePointer(0)
+Gui.frmQuickRouter..Event(UnLoad,frmQuickRouter_UnLoad)
+Gui.frmQuickRouter.gsgcRTRLines.Create(GsGridControl)
+Gui.frmQuickRouter.gsgcRTRLines.Size(14805,5280)
+Gui.frmQuickRouter.gsgcRTRLines.Position(120,6420)
+Gui.frmQuickRouter.cmdAdd.Create(Button)
+Gui.frmQuickRouter.cmdAdd.Size(1665,405)
+Gui.frmQuickRouter.cmdAdd.Position(165,11790)
+Gui.frmQuickRouter.cmdAdd.Caption("Add Lines")
+Gui.frmQuickRouter.cmdAdd.Event(Click,cmdAdd_Click)
+Gui.frmQuickRouter.lblGross.Create(Label,"Gross Order Total:",False,1935,255,0,7290,11025,True,0,"Arial",8,-2147483633,0)
+Gui.frmQuickRouter.lblTaxes.Create(Label,"Est. Taxes:",False,1935,255,0,10260,11025,True,0,"Arial",8,-2147483633,0)
+Gui.frmQuickRouter.lblTotal.Create(Label,"Total:",False,1935,255,0,12780,11025,True,0,"Arial",8,-2147483633,0)
+Gui.frmQuickRouter.txtGross.Create(TextBox,"",False,2100,300,0,7290,11295,True,0,"Arial",8,-2147483643,1)
+Gui.frmQuickRouter.txtTaxes.Create(TextBox,"",False,1680,300,0,10260,11280,True,0,"Arial",8,-2147483643,1)
+Gui.frmQuickRouter.txtTotal.Create(TextBox,"",False,2100,300,0,12780,11280,True,0,"Arial",8,-2147483643,1)
+Gui.frmQuickRouter.chkCache.Create(CheckBox)
+Gui.frmQuickRouter.chkCache.Size(2835,360)
+Gui.frmQuickRouter.chkCache.Position(105,165)
+Gui.frmQuickRouter.chkCache.Caption("Cache Mode")
+Gui.frmQuickRouter.chkCache.Event(Click,chkCache_Click)
+Gui.frmQuickRouter.tabMain.Create(Tab)
+Gui.frmQuickRouter.tabMain.Size(14895,5805)
+Gui.frmQuickRouter.tabMain.Position(105,555)
+Gui.frmQuickRouter.tabMain.Tabs(3)
+Gui.frmQuickRouter.tabMain.SetTab(0)
+Gui.frmQuickRouter.tabMain.Caption("Material")
+Gui.frmQuickRouter.tabMain.SetTab(1)
+Gui.frmQuickRouter.tabMain.Caption("Labour")
+Gui.frmQuickRouter.tabMain.SetTab(2)
+Gui.frmQuickRouter.tabMain.Caption("Outside")
+Gui.frmQuickRouter.gsgcInventory.Create(GsGridControl)
+Gui.frmQuickRouter.gsgcInventory.Size(14700,5310)
+Gui.frmQuickRouter.gsgcInventory.Position(45,45)
+Gui.frmQuickRouter.gsgcInventory.Event(RowCellClick,gsgcInventory_RowCellClick)
+Gui.frmQuickRouter.gsgcInventory.Parent("tabMain",0)
+Gui.frmQuickRouter.gsgcLabour.Create(GsGridControl)
+Gui.frmQuickRouter.gsgcLabour.Size(14700,5310)
+Gui.frmQuickRouter.gsgcLabour.Position(45,45)
+Gui.frmQuickRouter.gsgcLabour.Parent("tabMain",1)
+Gui.frmQuickRouter.gsgcLabour.Event(RowCellClick,gsgcLabour_RowCellClick)
+Gui.frmQuickRouter.gsgcOutside.Create(GsGridControl)
+Gui.frmQuickRouter.gsgcOutside.Size(14700,5310)
+Gui.frmQuickRouter.gsgcOutside.Position(45,45)
+Gui.frmQuickRouter.gsgcOutside.Parent("tabMain",2)
+Gui.frmQuickRouter.gsgcOutside.Event(RowCellClick,gsgcOutside_RowCellClick)
+Program.Sub.ScreenSU.End
+
+Program.Sub.Preflight.Start
+v.Global.sBuildRotr.Declare(string)
+Program.Sub.Preflight.End
+
+Program.Sub.gsgcInventory_RowCellClick.Start
+F.Intrinsic.Control.Try
+	v.Local.sPOQuoteFlag.Declare(string)
+	v.Local.sparams.Declare(string)
+	v.Local.spart.Declare(string)
+	v.Local.sret.Declare(string)
+	V.Local.lIndex.Declare(long)
+	
+	f.Intrinsic.Control.SelectCase(V.Args.Column)
+		f.Intrinsic.Control.Case("Add")
+			f.Data.DataTable.AddRow("dtLines","GSSPart",v.DataTable.dtINV(v.Args.rowindex).GSSPart!fieldvaltrim,"PartNumber",v.DataTable.dtINV(v.Args.rowindex).PartNumber!fieldvaltrim,"Description",v.DataTable.dtINV(v.Args.rowindex).Description!fieldvaltrim,"SetupQty",v.DataTable.dtINV(v.Args.rowindex).SetupQty!fieldvaltrim,"RunQty",v.DataTable.dtINV(v.Args.rowindex).RunQty!fieldvaltrim,"Cost",v.DataTable.dtINV(v.Args.rowindex).Cost!fieldvaltrim,"UoM",v.DataTable.dtINV(v.Args.rowindex).UoM!fieldvaltrim,"Notes",v.DataTable.dtINV(v.Args.rowindex).Notes!fieldvaltrim,"LMO",v.DataTable.dtINV(v.Args.rowindex).LMO!fieldvaltrim)
+	f.Intrinsic.Control.EndSelect
+
+F.Intrinsic.Control.Catch
+	F.Intrinsic.UI.Msgbox(V.Ambient.ErrorDescription)
+	F.ODBC.Connection!conx.Close
+	F.Intrinsic.Control.End
+F.Intrinsic.Control.EndTry
+Program.Sub.gsgcInventory_RowCellClick.End
+
+Program.Sub.gsgcLabour_RowCellClick.Start
+F.Intrinsic.Control.Try
+	v.Local.sPOQuoteFlag.Declare(string)
+	v.Local.sparams.Declare(string)
+	v.Local.spart.Declare(string)
+	v.Local.sret.Declare(string)
+	V.Local.lIndex.Declare(long)
+	
+	f.Intrinsic.Control.SelectCase(V.Args.Column)
+		f.Intrinsic.Control.Case("Add")
+			f.Data.DataTable.AddRow("dtLines","GSSPart",v.DataTable.dtLAB(v.Args.rowindex).GSSPart!fieldvaltrim,"PartNumber",v.DataTable.dtLAB(v.Args.rowindex).PartNumber!fieldvaltrim,"Description",v.DataTable.dtLAB(v.Args.rowindex).Description!fieldvaltrim,"SetupQty",v.DataTable.dtLAB(v.Args.rowindex).SetupQty!fieldvaltrim,"RunQty",v.DataTable.dtLAB(v.Args.rowindex).RunQty!fieldvaltrim,"Cost",v.DataTable.dtLAB(v.Args.rowindex).Cost!fieldvaltrim,"UoM",v.DataTable.dtLAB(v.Args.rowindex).UoM!fieldvaltrim,"Notes",v.DataTable.dtLAB(v.Args.rowindex).Notes!fieldvaltrim,"LMO",v.DataTable.dtLAB(v.Args.rowindex).LMO!fieldvaltrim)
+	f.Intrinsic.Control.EndSelect
+
+F.Intrinsic.Control.Catch
+	F.Intrinsic.UI.Msgbox(V.Ambient.ErrorDescription)
+	F.ODBC.Connection!conx.Close
+	F.Intrinsic.Control.End
+F.Intrinsic.Control.EndTry
+Program.Sub.gsgcLabour_RowCellClick.End
+
+Program.Sub.gsgcOutside_RowCellClick.Start
+F.Intrinsic.Control.Try
+	v.Local.sPOQuoteFlag.Declare(string)
+	v.Local.sparams.Declare(string)
+	v.Local.spart.Declare(string)
+	v.Local.sret.Declare(string)
+	V.Local.lIndex.Declare(long)
+	
+	f.Intrinsic.Control.SelectCase(V.Args.Column)
+		f.Intrinsic.Control.Case("Add")
+			f.Data.DataTable.AddRow("dtLines","GSSPart",v.DataTable.dtOUT(v.Args.rowindex).GSSPart!fieldvaltrim,"PartNumber",v.DataTable.dtOUT(v.Args.rowindex).PartNumber!fieldvaltrim,"Description",v.DataTable.dtOUT(v.Args.rowindex).Description!fieldvaltrim,"SetupQty",v.DataTable.dtOUT(v.Args.rowindex).SetupQty!fieldvaltrim,"RunQty",v.DataTable.dtOUT(v.Args.rowindex).RunQty!fieldvaltrim,"Cost",v.DataTable.dtOUT(v.Args.rowindex).Cost!fieldvaltrim,"UoM",v.DataTable.dtOUT(v.Args.rowindex).UoM!fieldvaltrim,"Notes",v.DataTable.dtOUT(v.Args.rowindex).Notes!fieldvaltrim,"LMO",v.DataTable.dtOUT(v.Args.rowindex).LMO!fieldvaltrim,"Vendor",v.DataTable.dtOUT(v.Args.rowindex).Vendor!fieldvaltrim,"Minimum",v.DataTable.dtOUT(v.Args.rowindex).Minimum!Fieldvaltrim)
+	f.Intrinsic.Control.EndSelect
+
+F.Intrinsic.Control.Catch
+	F.Intrinsic.UI.Msgbox(V.Ambient.ErrorDescription)
+	F.ODBC.Connection!conx.Close
+	F.Intrinsic.Control.End
+F.Intrinsic.Control.EndTry
+Program.Sub.gsgcOutside_RowCellClick.End
+
+Program.Sub.Main.Start
+'11210 Populate for Router Lines
+f.Intrinsic.Control.If(v.Caller.hook,=,"11210")
+	v.Passed.000202.Set("Quick Add")
+f.Intrinsic.Control.Else 
+'If(v.Caller.Hook,=,"11420")
+	v.Local.sCacheFile.Declare(string)
+	v.Local.sContent.Declare(string)
+	v.Local.bCacheFile.Declare(Boolean)
+	GUI.frmQuickRouter.tabMain.SetTab(0)
+
+	'ADD, Part, Description, QTY, Price, Due Date, UM, Code Sort, M or P
+	f.ODBC.Connection!con.openconnection(v.Ambient.PDSN,v.Ambient.PUser,v.Ambient.PPass)
+	
+	'Check if the temp file exists, create inventory grid
+	f.Intrinsic.String.Concat(v.Caller.LocalGSSTempDir,v.Caller.CompanyCode,"_",v.Caller.User,"_RTR.xml",v.Local.sCacheFile)
+	f.Intrinsic.File.Exists(v.Local.sCacheFile,v.Local.bCacheFile)
+	f.Intrinsic.Control.If(v.Local.bCacheFile)
+		f.Data.DataTable.CreateFromXML("dtINV",v.Local.sCacheFile,true)
+		gui.frmQuickRouter.chkCache.Value(1)
+	f.Intrinsic.Control.Else
+		f.Data.DataTable.CreateFromSQL("dtINV","con","SELECT DISTINCT '+' as 'Add', Inventory_MSTR.PART as 'GSSPart', IF(INV_LXR.DISPLAY_PART is null, RTRIM(SUBSTRING(INVENTORY_MSTR.PART, 1, 17)), RTRIM(INV_LXR.DISPLAY_PART)) AS 'PartNumber', RTRIM(INVENTORY_MSTR.DESCRIPTION) AS 'Description', 0.00 as SetupQTY, 0.00 as RunQTY, INVENTORY_MSTR.AMT_ALT_COST AS 'Cost', INVENTORY_MSTR.UM_INVENTORY AS 'UoM', INVENTORY_MSTR.CODE_SORT AS 'SortCode', INVENTORY_MSTR.PRODUCT_LINE AS 'ProductLine', INVENTORY_MST2.CODE_SOURCE AS 'MFPJ',  INVENTORY_MST2.NAME_VENDOR AS 'Vendor', '' as 'Notes', 'M' as 'LMO', '0' as 'Minimum' from INVENTORY_MSTR LEFT OUTER JOIN INVENTORY_MST2 ON INVENTORY_MSTR.PART = INVENTORY_MST2.PART AND INVENTORY_MSTR.LOCATION = INVENTORY_MST2.LOCATION LEFT OUTER JOIN INV_LXR ON INVENTORY_MSTR.PART = INV_LXR.GSS_PART ORDER BY 'PartNumber'",true)
+	f.Intrinsic.Control.EndIf
+	
+	'Set the stage
+	f.Data.DataTable.Clone("dtINV","dtLines",true)
+	gui.frmQuickRouter.gsgcRTRLines.DataSource("dtLines")
+	gui.frmQuickRouter.gsgcRTRLines.AddGridviewFromDatatable("gvLines","dtLines")
+	
+	'Create Inventory
+	gui.frmQuickRouter.gsgcInventory.DataSource("dtINV")
+	gui.frmQuickRouter.gsgcInventory.AddGridviewFromDatatable("gvINV","dtINV")
+	
+	'Create labour
+	f.Data.DataTable.CreateFromSQL("dtLAB","con","SELECT DISTINCT '+' as 'Add', MACHINE as 'GSSPart', MACHINE AS 'PartNumber', WC_NAME 'Description', 0.00 as SetupQTY, 0.00 as RunQTY, STANDARD_COST AS 'Cost', 'HR' AS 'UoM', '' AS 'SortCode', '' AS 'ProductLine', '' AS 'MFPJ',  '' AS 'Vendor', '' as 'Notes', 'L' as 'LMO', 0.00 as 'Minimum' from V_WORKCENTERS ORDER BY MACHINE",true)
+	GUI.frmQuickRouter.gsgcLabour.DataSource("dtLAB")
+	gui.frmQuickRouter.gsgcLabour.AddGridviewFromDatatable("gvLAB","dtLAB")
+	
+	'Create Outside processes
+	f.Data.DataTable.CreateFromSQL("dtOUT","con","SELECT DISTINCT '+' as 'Add', rtrim(MACHINE) as 'GSSPart', rtrim(MACHINE) AS 'PartNumber', rtrim(DESCRIPTION) 'Description', 0.00 as SetupQTY, STANDARD_RUNTIME as RunQTY, STANDARD_SETUP as 'Minimum', RATE AS 'Cost', UNIT_MEASURE AS 'UoM', '' AS 'SortCode', '' AS 'ProductLine', '' AS 'MFPJ',  OPERATION AS 'Vendor', '' as 'Notes', 'O' as 'LMO' from V_OP_CODES ORDER BY MACHINE",true)
+	GUI.frmQuickRouter.gsgcOutside.DataSource("dtOut")
+	gui.frmQuickRouter.gsgcOutside.AddGridviewFromDatatable("gvOUT","dtOUT")
+	
+	'Set misc. options
+	gui.frmQuickRouter.gsgcInventory.setgridviewproperty("gvINV","OptionsViewShowGroupPanel",True)
+	gui.frmQuickRouter.gsgcInventory.setgridviewproperty("gvINV","OptionsFindAlwaysVisible",True)
+	gui.frmQuickRouter.gsgcRTRLines.SetGridviewProperty("gvLines","AllowDeleteRows",True)
+	gui.frmQuickRouter.gsgcRTRLines.SetGridviewProperty("gvLines","OptionsViewRowAutoHeight",True)
+	
+	'MinWidth 
+	'Material
+	gui.frmQuickRouter.gsgcInventory.SetColumnProperty("gvINV","Add","MinWidth","5")
+	gui.frmQuickRouter.gsgcInventory.SetColumnProperty("gvINV","SetupQTY","MinWidth","20")
+	gui.frmQuickRouter.gsgcInventory.SetColumnProperty("gvINV","RunQTY","MinWidth","20")
+	gui.frmQuickRouter.gsgcInventory.SetColumnProperty("gvINV","Cost","MinWidth","20")
+	gui.frmQuickRouter.gsgcInventory.SetColumnProperty("gvINV","Description","MinWidth","130")
+	'Labour
+	gui.frmQuickRouter.gsgcLabour.SetColumnProperty("gvLAB","Add","MinWidth","5")
+	gui.frmQuickRouter.gsgcLabour.SetColumnProperty("gvLAB","SetupQTY","MinWidth","20")
+	gui.frmQuickRouter.gsgcLabour.SetColumnProperty("gvLAB","RunQTY","MinWidth","20")
+	gui.frmQuickRouter.gsgcLabour.SetColumnProperty("gvLAB","Cost","MinWidth","40")
+	gui.frmQuickRouter.gsgcLabour.SetColumnProperty("gvLAB","UoM","MinWidth","20")
+	gui.frmQuickRouter.gsgcLabour.SetColumnProperty("gvLAB","SetupQTY","MinWidth","20")
+	gui.frmQuickRouter.gsgcLabour.SetColumnProperty("gvLAB","Description","MinWidth","130")
+	gui.frmQuickRouter.gsgcLabour.SetColumnProperty("gvLAB","Notes","MinWidth","400")
+	'Outside
+	gui.frmQuickRouter.gsgcOutside.SetColumnProperty("gvOUT","Add","MinWidth","5")
+	gui.frmQuickRouter.gsgcOutside.SetColumnProperty("gvOUT","SetupQTY","MinWidth","20")
+	gui.frmQuickRouter.gsgcOutside.SetColumnProperty("gvOUT","RunQTY","MinWidth","20")
+	gui.frmQuickRouter.gsgcOutside.SetColumnProperty("gvOUT","Cost","MinWidth","20")
+	gui.frmQuickRouter.gsgcOutside.SetColumnProperty("gvOUT","UoM","MinWidth","40")
+	gui.frmQuickRouter.gsgcOutside.SetColumnProperty("gvOUT","Description","MinWidth","130")
+	gui.frmQuickRouter.gsgcOutside.SetColumnProperty("gvOUT","Notes","MinWidth","400")
+	'Routers
+	gui.frmQuickRouter.gsgcRTRLines.SetColumnProperty("gvLines","Notes","MinWidth","400")
+	
+	'Bold
+	'Material
+	gui.frmQuickRouter.gsgcInventory.SetColumnProperty("gvINV","SetupQTY","HeaderFontBold","True")
+	gui.frmQuickRouter.gsgcInventory.SetColumnProperty("gvINV","RunQTY","HeaderFontBold","True")
+	gui.frmQuickRouter.gsgcInventory.SetColumnProperty("gvINV","Cost","HeaderFontBold","True")
+	gui.frmQuickRouter.gsgcInventory.SetColumnProperty("gvINV","Add","HeaderFontBold","True")
+	gui.frmQuickRouter.gsgcInventory.SetColumnProperty("gvINV","PartNumber","HeaderFontBold","True")
+	gui.frmQuickRouter.gsgcInventory.SetColumnProperty("gvINV","Description","HeaderFontBold","True")
+	gui.frmQuickRouter.gsgcInventory.SetColumnProperty("gvINV","UoM","HeaderFontBold","True")
+	gui.frmQuickRouter.gsgcInventory.SetColumnProperty("gvINV","SortCode","HeaderFontBold","True")
+	gui.frmQuickRouter.gsgcInventory.SetColumnProperty("gvINV","ProductLine","HeaderFontBold","True")
+	gui.frmQuickRouter.gsgcInventory.SetColumnProperty("gvINV","MFPJ","HeaderFontBold","True")
+	gui.frmQuickRouter.gsgcInventory.SetColumnProperty("gvINV","Vendor","HeaderFontBold","True")
+	gui.frmQuickRouter.gsgcInventory.SetColumnProperty("gvINV","Notes","HeaderFontBold","True")
+	'Labour
+	gui.frmQuickRouter.gsgcLabour.SetColumnProperty("gvLAB","Vendor","HeaderFontBold","True")
+	gui.frmQuickRouter.gsgcLabour.SetColumnProperty("gvLAB","SetupQTY","HeaderFontBold","True")
+	gui.frmQuickRouter.gsgcLabour.SetColumnProperty("gvLAB","RunQTY","HeaderFontBold","True")
+	gui.frmQuickRouter.gsgcLabour.SetColumnProperty("gvLAB","Cost","HeaderFontBold","True")
+	gui.frmQuickRouter.gsgcLabour.SetColumnProperty("gvLAB","Add","HeaderFontBold","True")
+	gui.frmQuickRouter.gsgcLabour.SetColumnProperty("gvLAB","PartNumber","HeaderFontBold","True")
+	gui.frmQuickRouter.gsgcLabour.SetColumnProperty("gvLAB","Description","HeaderFontBold","True")
+	gui.frmQuickRouter.gsgcLabour.SetColumnProperty("gvLAB","UoM","HeaderFontBold","True")
+	gui.frmQuickRouter.gsgcLabour.SetColumnProperty("gvLAB","SortCode","HeaderFontBold","True")
+	gui.frmQuickRouter.gsgcLabour.SetColumnProperty("gvLAB","ProductLine","HeaderFontBold","True")
+	gui.frmQuickRouter.gsgcLabour.SetColumnProperty("gvLAB","MFPJ","HeaderFontBold","True")
+	gui.frmQuickRouter.gsgcLabour.SetColumnProperty("gvLAB","Vendor","HeaderFontBold","True")
+	gui.frmQuickRouter.gsgcLabour.SetColumnProperty("gvLAB","Notes","HeaderFontBold","True")
+	'Outside
+	gui.frmQuickRouter.gsgcOutside.SetColumnProperty("gvOUT","Vendor","HeaderFontBold","True")
+	gui.frmQuickRouter.gsgcOutside.SetColumnProperty("gvOUT","SetupQTY","HeaderFontBold","True")
+	gui.frmQuickRouter.gsgcOutside.SetColumnProperty("gvOUT","RunQTY","HeaderFontBold","True")
+	gui.frmQuickRouter.gsgcOutside.SetColumnProperty("gvOUT","Cost","HeaderFontBold","True")
+	gui.frmQuickRouter.gsgcOutside.SetColumnProperty("gvOUT","Add","HeaderFontBold","True")
+	gui.frmQuickRouter.gsgcOutside.SetColumnProperty("gvOUT","PartNumber","HeaderFontBold","True")
+	gui.frmQuickRouter.gsgcOutside.SetColumnProperty("gvOUT","Description","HeaderFontBold","True")
+	gui.frmQuickRouter.gsgcOutside.SetColumnProperty("gvOUT","UoM","HeaderFontBold","True")
+	gui.frmQuickRouter.gsgcOutside.SetColumnProperty("gvOUT","SortCode","HeaderFontBold","True")
+	gui.frmQuickRouter.gsgcOutside.SetColumnProperty("gvOUT","ProductLine","HeaderFontBold","True")
+	gui.frmQuickRouter.gsgcOutside.SetColumnProperty("gvOUT","MFPJ","HeaderFontBold","True")
+	gui.frmQuickRouter.gsgcOutside.SetColumnProperty("gvOUT","Vendor","HeaderFontBold","True")
+	GUI.frmQuickRouter.gsgcOutside.SetColumnProperty("gvOUT","Notes","HeaderFontBold","True")
+	GUI.frmQuickRouter.gsgcOutside.SetColumnProperty("gvOUT","Minimum","HeaderFontBold","True")
+	'Routers
+	gui.frmQuickRouter.gsgcRTRLines.SetColumnProperty("gvLines","SetupQTY","HeaderFontBold","True")
+	gui.frmQuickRouter.gsgcRTRLines.SetColumnProperty("gvLines","RunQTY","HeaderFontBold","True")
+	gui.frmQuickRouter.gsgcRTRLines.SetColumnProperty("gvLines","Cost","HeaderFontBold","True")
+	gui.frmQuickRouter.gsgcRTRLines.SetColumnProperty("gvLines","Add","HeaderFontBold","True")
+	gui.frmQuickRouter.gsgcRTRLines.SetColumnProperty("gvLines","PartNumber","HeaderFontBold","True")
+	gui.frmQuickRouter.gsgcRTRLines.SetColumnProperty("gvLines","Description","HeaderFontBold","True")
+	gui.frmQuickRouter.gsgcRTRLines.SetColumnProperty("gvLines","UoM","HeaderFontBold","True")
+	gui.frmQuickRouter.gsgcRTRLines.SetColumnProperty("gvLines","SortCode","HeaderFontBold","True")
+	gui.frmQuickRouter.gsgcRTRLines.SetColumnProperty("gvLines","ProductLine","HeaderFontBold","True")
+	gui.frmQuickRouter.gsgcRTRLines.SetColumnProperty("gvLines","MFPJ","HeaderFontBold","True")
+	gui.frmQuickRouter.gsgcRTRLines.SetColumnProperty("gvLines","Vendor","HeaderFontBold","True")
+	gui.frmQuickRouter.gsgcRTRLines.SetColumnProperty("gvLines","Notes","HeaderFontBold","True")
+	gui.frmQuickRouter.gsgcRTRLines.SetColumnProperty("gvLines","Minimum","HeaderFontBold","True")
+	
+	'Caption
+	'Material
+	gui.frmQuickRouter.gsgcInventory.SetColumnProperty("gvINV","PartNumber","Caption","Part")
+	gui.frmQuickRouter.gsgcInventory.SetColumnProperty("gvINV","SortCode","Caption","Sort Code")
+	gui.frmQuickRouter.gsgcInventory.SetColumnProperty("gvINV","ProductLine","Caption","Product Line")
+	gui.frmQuickRouter.gsgcInventory.SetColumnProperty("gvINV","MFPJ","Caption","Manufactured / Purchase")
+	'Labour
+	gui.frmQuickRouter.gsgcLabour.SetColumnProperty("gvLAB","PartNumber","Caption","Workcentre")
+	gui.frmQuickRouter.gsgcLabour.SetColumnProperty("gvLAB","SetupQTY","Caption","Setup Hours")
+	gui.frmQuickRouter.gsgcLabour.SetColumnProperty("gvLAB","RunQTY","Caption","Run Hours")
+	'Outside
+	gui.frmQuickRouter.gsgcOutside.SetColumnProperty("gvOUT","PartNumber","Caption","Code")
+	gui.frmQuickRouter.gsgcOutside.SetColumnProperty("gvOUT","SetupQTY","Caption","Setup")
+	gui.frmQuickRouter.gsgcOutside.SetColumnProperty("gvOUT","RunQTY","Caption","Run")
+	gui.frmQuickRouter.gsgcOutside.SetColumnProperty("gvOut","Minimum","Caption","Minimum Charge")
+	'Routers
+	gui.frmQuickRouter.gsgcRTRLines.SetColumnProperty("gvLines","PartNumber","Caption","Part")
+	gui.frmQuickRouter.gsgcRTRLines.SetColumnProperty("gvLines","SortCode","Caption","Sort Code")
+	gui.frmQuickRouter.gsgcRTRLines.SetColumnProperty("gvLines","ProductLine","Caption","Product Line")
+	gui.frmQuickRouter.gsgcRTRLines.SetColumnProperty("gvLines","MFPJ","Caption","Manufactured / Purchase")
+	
+	'Read Only
+	'Material
+	gui.frmQuickRouter.gsgcInventory.SetColumnProperty("gvINV","RunQTY","ReadOnly","False")
+	gui.frmQuickRouter.gsgcInventory.SetColumnProperty("gvINV","SetupQTY","ReadOnly","False")
+	gui.frmQuickRouter.gsgcInventory.SetColumnProperty("gvINV","Cost","ReadOnly","False")
+	gui.frmQuickRouter.gsgcInventory.SetColumnProperty("gvINV","Add","ReadOnly","True")
+	gui.frmQuickRouter.gsgcInventory.SetColumnProperty("gvINV","PartNumber","ReadOnly","True")
+	gui.frmQuickRouter.gsgcInventory.SetColumnProperty("gvINV","Description","ReadOnly","True")
+	gui.frmQuickRouter.gsgcInventory.SetColumnProperty("gvINV","UoM","ReadOnly","True")
+	gui.frmQuickRouter.gsgcInventory.SetColumnProperty("gvINV","SortCode","ReadOnly","True")
+	gui.frmQuickRouter.gsgcInventory.SetColumnProperty("gvINV","ProductLine","ReadOnly","True")
+	gui.frmQuickRouter.gsgcInventory.SetColumnProperty("gvINV","MFPJ","ReadOnly","True")
+	gui.frmQuickRouter.gsgcInventory.SetColumnProperty("gvINV","Vendor","ReadOnly","True")
+	gui.frmQuickRouter.gsgcInventory.SetColumnProperty("gvINV","Notes","ReadOnly","True")
+	'Labour
+	gui.frmQuickRouter.gsgcLabour.SetColumnProperty("gvLAB","SetupQTY","ReadOnly","False")
+	gui.frmQuickRouter.gsgcLabour.SetColumnProperty("gvLAB","RunQTY","ReadOnly","False")
+	gui.frmQuickRouter.gsgcLabour.SetColumnProperty("gvLAB","Cost","ReadOnly","False")
+	gui.frmQuickRouter.gsgcLabour.SetColumnProperty("gvLAB","Notes","ReadOnly","False")
+	gui.frmQuickRouter.gsgcLabour.SetColumnProperty("gvLAB","Add","ReadOnly","True")
+	gui.frmQuickRouter.gsgcLabour.SetColumnProperty("gvLAB","PartNumber","ReadOnly","True")
+	gui.frmQuickRouter.gsgcLabour.SetColumnProperty("gvLAB","Description","ReadOnly","True")
+	gui.frmQuickRouter.gsgcLabour.SetColumnProperty("gvLAB","UoM","ReadOnly","True")
+	gui.frmQuickRouter.gsgcLabour.SetColumnProperty("gvLAB","SortCode","ReadOnly","True")
+	gui.frmQuickRouter.gsgcLabour.SetColumnProperty("gvLAB","ProductLine","ReadOnly","True")
+	gui.frmQuickRouter.gsgcLabour.SetColumnProperty("gvLAB","MFPJ","ReadOnly","True")
+	gui.frmQuickRouter.gsgcLabour.SetColumnProperty("gvLAB","Vendor","ReadOnly","True")
+	gui.frmQuickRouter.gsgcLabour.SetColumnProperty("gvLAB","Notes","ReadOnly","False")
+	'Outside
+	gui.frmQuickRouter.gsgcOutside.SetColumnProperty("gvOUT","SetupQTY","ReadOnly","False")
+	gui.frmQuickRouter.gsgcOutside.SetColumnProperty("gvOUT","RunQTY","ReadOnly","False")
+	gui.frmQuickRouter.gsgcOutside.SetColumnProperty("gvOUT","Cost","ReadOnly","False")
+	gui.frmQuickRouter.gsgcOutside.SetColumnProperty("gvOUT","Notes","ReadOnly","False")
+	gui.frmQuickRouter.gsgcOutside.SetColumnProperty("gvOUT","Add","ReadOnly","True")
+	gui.frmQuickRouter.gsgcOutside.SetColumnProperty("gvOUT","PartNumber","ReadOnly","True")
+	gui.frmQuickRouter.gsgcOutside.SetColumnProperty("gvOUT","Description","ReadOnly","True")
+	gui.frmQuickRouter.gsgcOutside.SetColumnProperty("gvOUT","UoM","ReadOnly","True")
+	gui.frmQuickRouter.gsgcOutside.SetColumnProperty("gvOUT","SortCode","ReadOnly","True")
+	gui.frmQuickRouter.gsgcOutside.SetColumnProperty("gvOUT","ProductLine","ReadOnly","True")
+	gui.frmQuickRouter.gsgcOutside.SetColumnProperty("gvOUT","MFPJ","ReadOnly","True")
+	gui.frmQuickRouter.gsgcOutside.SetColumnProperty("gvOUT","Vendor","ReadOnly","True")
+	gui.frmQuickRouter.gsgcOutside.SetColumnProperty("gvOUT","Notes","ReadOnly","False")
+	gui.frmQuickRouter.gsgcOutside.SetColumnProperty("gvOUT","Minimum","ReadOnly","False")
+	'Routers
+	gui.frmQuickRouter.gsgcRTRLines.SetColumnProperty("gvLines","RunQTY","ReadOnly","False")
+	gui.frmQuickRouter.gsgcRTRLines.SetColumnProperty("gvLines","SetupQTY","ReadOnly","False")
+	gui.frmQuickRouter.gsgcRTRLines.SetColumnProperty("gvLines","Cost","ReadOnly","False")
+	gui.frmQuickRouter.gsgcRTRLines.SetColumnProperty("gvLines","Add","ReadOnly","True")
+	gui.frmQuickRouter.gsgcRTRLines.SetColumnProperty("gvLines","PartNumber","ReadOnly","True")
+	gui.frmQuickRouter.gsgcRTRLines.SetColumnProperty("gvLines","Description","ReadOnly","True")
+	gui.frmQuickRouter.gsgcRTRLines.SetColumnProperty("gvLines","UoM","ReadOnly","True")
+	gui.frmQuickRouter.gsgcRTRLines.SetColumnProperty("gvLines","SortCode","ReadOnly","True")
+	gui.frmQuickRouter.gsgcRTRLines.SetColumnProperty("gvLines","ProductLine","ReadOnly","True")
+	gui.frmQuickRouter.gsgcRTRLines.SetColumnProperty("gvLines","MFPJ","ReadOnly","True")
+	gui.frmQuickRouter.gsgcRTRLines.SetColumnProperty("gvLines","Vendor","ReadOnly","True")
+	gui.frmQuickRouter.gsgcRTRLines.SetColumnProperty("gvLines","Notes","ReadOnly","False")
+	gui.frmQuickRouter.gsgcRTRLines.SetColumnProperty("gvLines","Minimum","ReadOnly","False")
+	
+	'Editable
+	'Material
+	gui.frmQuickRouter.gsgcInventory.SetColumnProperty("gvINV","RunQTY","AllowEdit","True")
+	gui.frmQuickRouter.gsgcInventory.SetColumnProperty("gvINV","SetupQTY","AllowEdit","True")
+	gui.frmQuickRouter.gsgcInventory.SetColumnProperty("gvINV","Cost","AllowEdit","True")
+	gui.frmQuickRouter.gsgcInventory.SetColumnProperty("gvINV","Add","AllowEdit","False")
+	gui.frmQuickRouter.gsgcInventory.SetColumnProperty("gvINV","PartNumber","AllowEdit","False")
+	gui.frmQuickRouter.gsgcInventory.SetColumnProperty("gvINV","Description","AllowEdit","False")
+	gui.frmQuickRouter.gsgcInventory.SetColumnProperty("gvINV","UoM","AllowEdit","False")
+	gui.frmQuickRouter.gsgcInventory.SetColumnProperty("gvINV","SortCode","AllowEdit","False")
+	gui.frmQuickRouter.gsgcInventory.SetColumnProperty("gvINV","ProductLine","AllowEdit","False")
+	gui.frmQuickRouter.gsgcInventory.SetColumnProperty("gvINV","MFPJ","AllowEdit","False")
+	gui.frmQuickRouter.gsgcInventory.SetColumnProperty("gvINV","Vendor","AllowEdit","False")
+	gui.frmQuickRouter.gsgcInventory.SetColumnProperty("gvINV","Notes","AllowEdit","True")
+	'Labour
+	gui.frmQuickRouter.gsgcLabour.SetColumnProperty("gvLAB","Add","AllowEdit","False")
+	gui.frmQuickRouter.gsgcLabour.SetColumnProperty("gvLAB","PartNumber","AllowEdit","False")
+	gui.frmQuickRouter.gsgcLabour.SetColumnProperty("gvLAB","Description","AllowEdit","False")
+	gui.frmQuickRouter.gsgcLabour.SetColumnProperty("gvLAB","UoM","AllowEdit","False")
+	gui.frmQuickRouter.gsgcLabour.SetColumnProperty("gvLAB","SortCode","AllowEdit","False")
+	gui.frmQuickRouter.gsgcLabour.SetColumnProperty("gvLAB","ProductLine","AllowEdit","False")
+	gui.frmQuickRouter.gsgcLabour.SetColumnProperty("gvLAB","MFPJ","AllowEdit","False")
+	gui.frmQuickRouter.gsgcLabour.SetColumnProperty("gvLAB","Vendor","AllowEdit","False")
+	gui.frmQuickRouter.gsgcLabour.SetColumnProperty("gvLAB","SetupQty","AllowEdit","True")
+	gui.frmQuickRouter.gsgcLabour.SetColumnProperty("gvLAB","RunQty","AllowEdit","True")
+	gui.frmQuickRouter.gsgcLabour.SetColumnProperty("gvLAB","Cost","AllowEdit","True")
+	gui.frmQuickRouter.gsgcLabour.SetColumnProperty("gvLAB","Notes","AllowEdit","True")
+	'Outside
+	gui.frmQuickRouter.gsgcOutside.SetColumnProperty("gvOUT","Add","AllowEdit","False")
+	gui.frmQuickRouter.gsgcOutside.SetColumnProperty("gvOUT","PartNumber","AllowEdit","False")
+	gui.frmQuickRouter.gsgcOutside.SetColumnProperty("gvOUT","Description","AllowEdit","False")
+	gui.frmQuickRouter.gsgcOutside.SetColumnProperty("gvOUT","UoM","AllowEdit","False")
+	gui.frmQuickRouter.gsgcOutside.SetColumnProperty("gvOUT","SortCode","AllowEdit","False")
+	gui.frmQuickRouter.gsgcOutside.SetColumnProperty("gvOUT","ProductLine","AllowEdit","False")
+	gui.frmQuickRouter.gsgcOutside.SetColumnProperty("gvOUT","MFPJ","AllowEdit","False")
+	gui.frmQuickRouter.gsgcOutside.SetColumnProperty("gvOUT","Vendor","AllowEdit","False")
+	gui.frmQuickRouter.gsgcOutside.SetColumnProperty("gvOUT","SetupQty","AllowEdit","True")
+	gui.frmQuickRouter.gsgcOutside.SetColumnProperty("gvOUT","RunQty","AllowEdit","True")
+	gui.frmQuickRouter.gsgcOutside.SetColumnProperty("gvOUT","Cost","AllowEdit","True")
+	gui.frmQuickRouter.gsgcOutside.SetColumnProperty("gvOUT","Notes","AllowEdit","True")
+	gui.frmQuickRouter.gsgcOutside.SetColumnProperty("gvOUT","Minimum","AllowEdit","True")
+	'Routers
+	gui.frmQuickRouter.gsgcRTRLines.SetColumnProperty("gvLines","RunQTY","AllowEdit","True")
+	gui.frmQuickRouter.gsgcRTRLines.SetColumnProperty("gvLines","SetupQTY","AllowEdit","True")
+	gui.frmQuickRouter.gsgcRTRLines.SetColumnProperty("gvLines","Cost","AllowEdit","True")
+	gui.frmQuickRouter.gsgcRTRLines.SetColumnProperty("gvLines","Add","AllowEdit","False")
+	gui.frmQuickRouter.gsgcRTRLines.SetColumnProperty("gvLines","PartNumber","AllowEdit","False")
+	gui.frmQuickRouter.gsgcRTRLines.SetColumnProperty("gvLines","Description","AllowEdit","False")
+	gui.frmQuickRouter.gsgcRTRLines.SetColumnProperty("gvLines","UoM","AllowEdit","False")
+	gui.frmQuickRouter.gsgcRTRLines.SetColumnProperty("gvLines","SortCode","AllowEdit","False")
+	gui.frmQuickRouter.gsgcRTRLines.SetColumnProperty("gvLines","ProductLine","AllowEdit","False")
+	gui.frmQuickRouter.gsgcRTRLines.SetColumnProperty("gvLines","MFPJ","AllowEdit","False")
+	gui.frmQuickRouter.gsgcRTRLines.SetColumnProperty("gvLines","Vendor","AllowEdit","False")
+	gui.frmQuickRouter.gsgcRTRLines.SetColumnProperty("gvLines","Notes","AllowEdit","True")
+	gui.frmQuickRouter.gsgcRTRLines.SetColumnProperty("gvLines","Minimum","AllowEdit","True")
+	
+	'Visible
+	'Material
+	gui.frmQuickRouter.gsgcInventory.SetColumnProperty("gvINV","GSSPart","Visible","False")
+	gui.frmQuickRouter.gsgcInventory.SetColumnProperty("gvINV","Notes","Visible","False")
+	gui.frmQuickRouter.gsgcInventory.SetColumnProperty("gvINV","LMO","Visible","False")
+	gui.frmQuickRouter.gsgcInventory.SetColumnProperty("gvINV","Minimum","Visible","False")
+	'Labour
+	gui.frmQuickRouter.gsgcLabour.SetColumnProperty("gvLAB","GSSPart","Visible","False")
+	gui.frmQuickRouter.gsgcLabour.SetColumnProperty("gvLAB","SortCode","Visible","False")
+	gui.frmQuickRouter.gsgcLabour.SetColumnProperty("gvLAB","ProductLine","Visible","False")
+	gui.frmQuickRouter.gsgcLabour.SetColumnProperty("gvLAB","MFPJ","Visible","False")
+	gui.frmQuickRouter.gsgcLabour.SetColumnProperty("gvLAB","Vendor","Visible","False")	
+	gui.frmQuickRouter.gsgcLabour.SetColumnProperty("gvLAB","LMO","Visible","False")	
+	gui.frmQuickRouter.gsgcLabour.SetColumnProperty("gvLAB","Minimum","Visible","False")		
+	'Outside
+	gui.frmQuickRouter.gsgcOutside.SetColumnProperty("gvOUT","GSSPart","Visible","False")
+	gui.frmQuickRouter.gsgcOutside.SetColumnProperty("gvOUT","SortCode","Visible","False")
+	gui.frmQuickRouter.gsgcOutside.SetColumnProperty("gvOUT","ProductLine","Visible","False")
+	gui.frmQuickRouter.gsgcOutside.SetColumnProperty("gvOUT","MFPJ","Visible","False")
+	gui.frmQuickRouter.gsgcOutside.SetColumnProperty("gvOUT","Vendor","Visible","False")
+	gui.frmQuickRouter.gsgcOutside.SetColumnProperty("gvOUT","LMO","Visible","False")
+	gui.frmQuickRouter.gsgcOutside.SetColumnProperty("gvOUT","Minimum","Visible","True")
+	'Routers
+	gui.frmQuickRouter.gsgcRTRLines.SetColumnProperty("gvLines","Add","Visible","False")
+	gui.frmQuickRouter.gsgcRTRLines.SetColumnProperty("gvLines","GSSPart","Visible","False")
+	gui.frmQuickRouter.gsgcRTRLines.SetColumnProperty("gvLines","SortCode","Visible","False")
+	gui.frmQuickRouter.gsgcRTRLines.SetColumnProperty("gvLines","ProductLine","Visible","False")
+	gui.frmQuickRouter.gsgcRTRLines.SetColumnProperty("gvLines","MFPJ","Visible","False")
+	gui.frmQuickRouter.gsgcRTRLines.SetColumnProperty("gvLines","Vendor","Visible","False")
+	gui.frmQuickRouter.gsgcRTRLines.SetColumnProperty("gvLines","LMO","Visible","False")
+	gui.frmQuickRouter.gsgcRTRLines.SetColumnProperty("gvLines","Minimum","Visible","False")
+		
+	gui.frmQuickRouter.tabMain.anchor(15)
+	gui.frmQuickRouter.gsgcInventory.anchor(15)
+	gui.frmQuickRouter.gsgcLabour.anchor(15)
+	gui.frmQuickRouter.gsgcOutside.anchor(15)
+	gui.frmQuickRouter.gsgcRTRLines.anchor(14)
+	gui.frmQuickRouter.cmdAdd.anchor(6)
+	gui.frmQuickRouter..Show
+f.Intrinsic.Control.EndIf
+Program.Sub.Main.End
+
+Program.Sub.cmdAdd_Click.Start
+'arguments, Number, part, RunTime,  Comment, um, lmo,workcenter, overlap
+'LMO need to be C for comment
+'LMO needs to be L for workcenter
+'LMO needs to be M for material RunTime is quantity when LMO is M
+V.Local.iCt.Declare(Long)
+V.Local.shold.Declare(String)
+V.Local.iPLine.Declare(Long)
+V.Local.iPSeq.Declare(Long)
+V.Local.sSQL.Declare(String)
+V.Local.sOp.Declare(String)
+V.Local.sDesc.Declare(String)
+V.Local.sLMO.Declare(String)
+v.Local.i.Declare(long)
+v.Local.lAutoNumber.Declare(long)
+v.Local.sRouter.Declare(string)
+v.Local.sRouter.Set(V.Passed.ROUTER-NUM)
+v.Local.sNotes.Declare(string)
+
+f.Intrinsic.Control.For(v.Local.i,0,v.DataTable.dtLines.RowCount--,1)
+	'Set Notes
+	v.Local.sNotes.Set(v.DataTable.dtLines(v.Local.i).NOTES!FIELDVAL)
+	
+	'Router Number
+	F.Intrinsic.String.RPad(V.Local.sRouter," ",20,V.Local.shold)
+	F.Intrinsic.String.Left(V.Local.shold,20,V.Local.shold)
+	f.Intrinsic.String.Concat(v.Global.sBuildRotr,v.Local.shold,v.Global.sBuildRotr)
+	
+	'Header Desc
+	F.Intrinsic.String.RPad(" "," ",30,V.Local.shold)
+	F.Intrinsic.String.Left(V.Local.shold,30,V.Local.sHold)
+	f.Intrinsic.String.Concat(v.Global.sBuildRotr,v.Local.shold,v.Global.sBuildRotr)
+	
+	'Sequence
+	f.Intrinsic.Math.Add(v.Local.lAutoNumber,v.Passed.RENUM-SEQ,v.Local.lAutoNumber)
+	F.Intrinsic.String.Format(V.local.lAutoNumber,"000000",V.Local.shold)
+	'Add in sequence comments
+	f.Intrinsic.String.Build("DELETE FROM RTR_SEQ_COMMENTS WHERE RTR_NUMBER='{0}' AND RTR_SEQ='{1}'",V.Local.sRouter.Trim,V.Local.sHold,v.Local.ssql)
+	F.ODBC.Connection!con.EXECUTE(v.Local.ssql)
+	f.Intrinsic.String.Build("INSERT INTO RTR_SEQ_COMMENTS VALUES ('{0}','{1}','{2}')",V.Local.sRouter.Trim,V.Local.sHold,V.Local.sNotes.PSQLFriendly,v.Local.ssql)
+	F.ODBC.Connection!con.EXECUTE(v.Local.ssql)
+	f.Intrinsic.String.Concat(v.Global.sBuildRotr,v.Local.shold,v.Global.sBuildRotr)
+	
+	'LMO
+	F.Intrinsic.String.RPad(V.DataTable.dtLines(v.Local.i).LMO!FIELDVALTRIM," ",1,V.Local.shold)
+	F.Intrinsic.String.Left(V.Local.shold,1,V.Local.shold)
+	f.Intrinsic.String.Concat(v.Global.sBuildRotr,v.Local.shold,v.Global.sBuildRotr)
+	
+	'Part
+	F.Intrinsic.String.RPad(V.DataTable.dtLines(v.Local.i).GSSPart!FIELDVALTRIM," ",20,V.Local.shold)
+	F.Intrinsic.String.Left(V.Local.shold,20,V.Local.shold)
+	f.Intrinsic.String.Concat(v.Global.sBuildRotr,v.Local.shold,v.Global.sBuildRotr)
+	
+	'Workcenter
+	F.Intrinsic.String.RPad(V.DataTable.dtLines(v.Local.i).GSSPart!FIELDVALTRIM," ",4,V.Local.shold)
+	F.Intrinsic.String.Left(V.Local.shold,4,V.Local.shold)
+	f.Intrinsic.String.Concat(v.Global.sBuildRotr,v.Local.shold,v.Global.sBuildRotr)
+	
+	'Seq Desc
+	F.Intrinsic.String.RPad(V.DataTable.dtLines(v.Local.i).DESCRIPTION!FIELDVALTRIM," ",30,V.Local.shold)
+	F.Intrinsic.String.Left(V.Local.shold,30,V.Local.sDesc)
+	f.Intrinsic.String.Concat(v.Global.sBuildRotr,v.Local.shold,v.Global.sBuildRotr)
+	
+	'Setup
+	F.Intrinsic.String.LPad(V.DataTable.dtLines(v.Local.i).SetupQTY!FIELDVAL," ",16,V.Local.shold)
+	F.Intrinsic.String.Left(V.Local.shold,16,V.Local.shold)
+	f.Intrinsic.String.Concat(v.Global.sBuildRotr,v.Local.shold,v.Global.sBuildRotr)
+
+	'Runtime/Material
+	F.Intrinsic.Control.If(V.DataTable.dtLines(v.Local.i).RunQTY!FIELDVAL,<>,0)
+		F.Intrinsic.String.LPad(V.DataTable.dtLines(v.Local.i).RunQTY!FIELDVAL," ",16,V.Local.shold)
+	F.Intrinsic.Control.Else
+		F.Intrinsic.String.LPad("00000000000.0000"," ",16,V.Local.shold)
+	F.Intrinsic.Control.EndIf
+	F.Intrinsic.String.Left(V.Local.shold,16,V.Local.shold)
+	f.Intrinsic.String.Concat(v.Global.sBuildRotr,v.Local.shold,v.Global.sBuildRotr)
+	
+	'Customer
+	F.Intrinsic.String.RPad(""," ",6,V.Local.shold)
+	F.Intrinsic.String.Left(V.Local.shold,6,V.Local.shold)
+	f.Intrinsic.String.Concat(v.Global.sBuildRotr,v.Local.shold,v.Global.sBuildRotr)
+	
+	'Orig Date
+	F.Intrinsic.String.Format(V.Ambient.Date,"MMDDYY",v.Local.shold)
+	f.Intrinsic.String.Concat(v.Global.sBuildRotr,v.Local.shold,v.Global.sBuildRotr)
+	
+	'Op Code
+	f.Intrinsic.Control.If(V.DataTable.dtLines(v.Local.i).LMO!FIELDVALTRIM,=,"O")
+		F.Intrinsic.String.RPad(v.DataTable.dtlines(v.Local.i).VENDOR!FIELDVAL," ",6,V.Local.shold)
+		F.Intrinsic.String.Left(V.Local.shold,6,V.Local.sOp)
+		f.Intrinsic.String.Concat(v.Global.sBuildRotr,v.Local.shold,v.Global.sBuildRotr)
+	f.Intrinsic.Control.Else
+		F.Intrinsic.String.RPad(""," ",6,V.Local.shold)
+		F.Intrinsic.String.Left(V.Local.shold,6,V.Local.sOp)
+		f.Intrinsic.String.Concat(v.Global.sBuildRotr,v.Local.shold,v.Global.sBuildRotr)
+	f.Intrinsic.Control.EndIf
+
+	'Rate
+	F.Intrinsic.Control.If(V.DataTable.dtLines(v.Local.i).COST!FIELDVAL,=,0)
+		V.Local.shold.Set("00000000000.0000")
+	F.Intrinsic.Control.Else
+		F.Intrinsic.Control.If(v.DataTable.dtLines(v.Local.i).COST!FIELDVAL,=,0)
+			V.Local.shold.Set("00000000000.0000")
+		F.Intrinsic.Control.Else
+			F.Intrinsic.String.Format(v.DataTable.dtLines(v.Local.i).COST!FIELDVAL,"#.0000",V.Local.shold)
+			F.Intrinsic.String.LPad(V.Local.shold,"0",16,V.Local.shold)
+		F.Intrinsic.Control.EndIf
+	F.Intrinsic.Control.EndIf
+	f.Intrinsic.String.Concat(v.Global.sBuildRotr,v.Local.shold,v.Global.sBuildRotr)
+	
+	'UM
+	F.Intrinsic.String.RPad(V.DataTable.dtLines(v.Local.i).UoM!FIELDVAL," ",2,V.Local.shold)
+	F.Intrinsic.String.Left(V.Local.shold,2,V.Local.shold)
+	f.Intrinsic.String.Concat(v.Global.sBuildRotr,v.Local.shold,v.Global.sBuildRotr)
+	
+	'Desc 1-3
+	F.Intrinsic.String.RPad(""," ",71,V.Local.shold)
+	F.Intrinsic.String.Left(V.Local.shold,71,V.Local.shold)
+	f.Intrinsic.String.Concat(v.Global.sBuildRotr,v.Local.shold,v.Global.sBuildRotr)
+	F.Intrinsic.String.RPad(""," ",71,V.Local.shold)
+	F.Intrinsic.String.Left(V.Local.shold,71,V.Local.shold)
+	f.Intrinsic.String.Concat(v.Global.sBuildRotr,v.Local.shold,v.Global.sBuildRotr)
+	F.Intrinsic.String.RPad(""," ",71,V.Local.shold)
+	F.Intrinsic.String.Left(V.Local.shold,71,V.Local.shold)
+	f.Intrinsic.String.Concat(v.Global.sBuildRotr,v.Local.shold,v.Global.sBuildRotr)
+	
+	'Quantity 1-10
+	F.Intrinsic.String.LPad("","0",16,V.Local.shold)
+	f.Intrinsic.String.Concat(v.Global.sBuildRotr,v.Local.shold,v.Global.sBuildRotr)
+	F.Intrinsic.String.LPad("","0",16,V.Local.shold)
+	f.Intrinsic.String.Concat(v.Global.sBuildRotr,v.Local.shold,v.Global.sBuildRotr)
+	F.Intrinsic.String.LPad("","0",16,V.Local.shold)
+	f.Intrinsic.String.Concat(v.Global.sBuildRotr,v.Local.shold,v.Global.sBuildRotr)
+	F.Intrinsic.String.LPad("","0",16,V.Local.shold)
+	f.Intrinsic.String.Concat(v.Global.sBuildRotr,v.Local.shold,v.Global.sBuildRotr)
+	
+	'Purge
+	F.Intrinsic.String.LPad(""," ",1,V.Local.shold)
+	F.Intrinsic.String.Left(V.Local.shold,1,V.Local.shold)
+	f.Intrinsic.String.Concat(v.Global.sBuildRotr,v.Local.shold,v.Global.sBuildRotr)
+	
+	'Frequency
+	F.Intrinsic.String.LPad(""," ",16,V.Local.shold)
+	F.Intrinsic.String.Left(V.Local.shold,16,V.Local.shold)
+	f.Intrinsic.String.Concat(v.Global.sBuildRotr,v.Local.shold,v.Global.sBuildRotr)
+	
+	'Machine
+	F.Intrinsic.String.LPad("0.00","0",16,V.Local.shold)
+	F.Intrinsic.String.Left(V.Local.shold,16,V.Local.shold)
+	f.Intrinsic.String.Concat(v.Global.sBuildRotr,v.Local.shold,v.Global.sBuildRotr)
+	
+	'Overlap
+	F.Intrinsic.String.LPad(""," ",16,V.Local.shold)
+	F.Intrinsic.String.Left(V.Local.shold,16,V.Local.shold)
+	f.Intrinsic.String.Concat(v.Global.sBuildRotr,v.Local.shold,v.Global.sBuildRotr)
+	
+	'WC Factor
+	f.Intrinsic.String.Concat(v.Global.sBuildRotr,"                ",v.Global.sBuildRotr)
+	
+	'Min Flag
+	f.Intrinsic.Control.If(V.DataTable.dtLines(v.Local.i).LMO!FIELDVALTRIM,=,"O")
+		f.Intrinsic.String.Concat(v.Global.sBuildRotr,"M",v.Global.sBuildRotr)
+	F.Intrinsic.Control.Else
+		f.Intrinsic.String.Concat(v.Global.sBuildRotr," ",v.Global.sBuildRotr)
+	F.Intrinsic.Control.EndIf
+	
+	'Min Outside
+	f.Intrinsic.Control.If(V.DataTable.dtLines(v.Local.i).LMO!FIELDVALTRIM,=,"O")
+		F.Intrinsic.String.LPad(V.DataTable.dtLines(v.Local.i).MINIMUM!FIELDVAL," ",16,V.Local.shold)
+		F.Intrinsic.String.Left(V.Local.shold,16,V.Local.shold)
+		f.Intrinsic.String.Concat(v.Global.sBuildRotr,v.Local.shold,v.Global.sBuildRotr)
+	F.Intrinsic.Control.Else
+		F.Intrinsic.String.LPad("0.0000"," ",16,V.Local.shold)
+		F.Intrinsic.String.Left(V.Local.shold,16,V.Local.shold)
+		f.Intrinsic.String.Concat(v.Global.sBuildRotr,v.Local.shold,v.Global.sBuildRotr)
+	F.Intrinsic.Control.EndIf
+	
+	'Crew Size
+	F.Intrinsic.String.LPad("0.0000"," ",16,V.Local.shold)
+	F.Intrinsic.String.Left(V.Local.shold,16,V.Local.shold)
+	f.Intrinsic.String.Concat(v.Global.sBuildRotr,v.Local.shold,v.Global.sBuildRotr)
+	
+	'Lead Time
+	F.Intrinsic.String.LPad(""," ",16,V.Local.shold)
+	F.Intrinsic.String.Left(V.Local.shold,16,V.Local.shold)
+	f.Intrinsic.String.Concat(v.Global.sBuildRotr,v.Local.shold,v.Global.sBuildRotr)
+	
+	'Part Loc
+	F.Intrinsic.String.RPad(""," ",2,V.Local.shold)
+	F.Intrinsic.String.Left(V.Local.shold,2,V.Local.shold)
+	f.Intrinsic.String.Concat(v.Global.sBuildRotr,v.Local.shold,v.Global.sBuildRotr)
+	
+	'Tooling Switch
+	F.Intrinsic.String.RPad(""," ",1,V.Local.shold)
+	F.Intrinsic.String.Left(V.Local.shold,1,V.Local.shold)
+	f.Intrinsic.String.Concat(v.Global.sBuildRotr,v.Local.shold,v.Global.sBuildRotr)
+	
+	'Sort Code
+	F.Intrinsic.String.RPad(""," ",20,V.Local.shold)
+	F.Intrinsic.String.Left(V.Local.shold,20,V.Local.shold)
+	f.Intrinsic.String.Concat(v.Global.sBuildRotr,v.Local.shold,v.Global.sBuildRotr)
+	
+	'Drawing No
+	F.Intrinsic.String.RPad(""," ",30,V.Local.shold)
+	F.Intrinsic.String.Left(V.Local.shold,30,V.Local.shold)
+	f.Intrinsic.String.Concat(v.Global.sBuildRotr,v.Local.shold,v.Global.sBuildRotr)
+	
+	'PAD
+	F.Intrinsic.String.RPad(" "," ",250,V.Local.shold)
+	F.Intrinsic.String.Concat(v.global.sBuildRotr,V.Local.shold,v.global.sBuildRotr)
+	
+	'Scrap
+	F.Intrinsic.String.LPad("0.000"," ",16,V.Local.shold)
+	F.Intrinsic.String.Left(V.Local.shold,16,V.Local.shold)
+	f.Intrinsic.String.Concat(v.Global.sBuildRotr,v.Local.shold,v.Global.sBuildRotr)
+	
+	'Cust Part
+	F.Intrinsic.String.RPad(""," ",20,V.Local.shold)
+	F.Intrinsic.String.Left(V.Local.shold,20,V.Local.shold)
+	f.Intrinsic.String.Concat(v.Global.sBuildRotr,v.Local.shold,v.Global.sBuildRotr)
+	
+	'Sort 1
+	F.Intrinsic.String.RPad(""," ",20,V.Local.shold)
+	F.Intrinsic.String.Left(V.Local.shold,20,V.Local.shold)
+	f.Intrinsic.String.Concat(v.Global.sBuildRotr,v.Local.shold,v.Global.sBuildRotr)
+	
+	'Sort 2
+	F.Intrinsic.String.RPad(""," ",20,V.Local.shold)
+	F.Intrinsic.String.Left(V.Local.shold,20,V.Local.shold)
+	f.Intrinsic.String.Concat(v.Global.sBuildRotr,v.Local.shold,v.Global.sBuildRotr)
+	
+	'Commission
+	F.Intrinsic.String.LPad("0.00"," ",16,V.Local.shold)
+	F.Intrinsic.String.Left(V.Local.shold,16,V.Local.shold)
+	f.Intrinsic.String.Concat(v.Global.sBuildRotr,v.Local.shold,v.Global.sBuildRotr)
+	
+	'Quantities
+	F.Intrinsic.String.LPad("","0",16,V.Local.shold)
+	f.Intrinsic.String.Concat(v.Global.sBuildRotr,v.Local.shold,v.Global.sBuildRotr)
+	F.Intrinsic.String.LPad("","0",16,V.Local.shold)
+	f.Intrinsic.String.Concat(v.Global.sBuildRotr,v.Local.shold,v.Global.sBuildRotr)
+	F.Intrinsic.String.LPad("","0",16,V.Local.shold)
+	f.Intrinsic.String.Concat(v.Global.sBuildRotr,v.Local.shold,v.Global.sBuildRotr)
+	F.Intrinsic.String.LPad("","0",16,V.Local.shold)
+	f.Intrinsic.String.Concat(v.Global.sBuildRotr,v.Local.shold,v.Global.sBuildRotr)
+	F.Intrinsic.String.LPad("","0",16,V.Local.shold)
+	f.Intrinsic.String.Concat(v.Global.sBuildRotr,v.Local.shold,v.Global.sBuildRotr)
+	F.Intrinsic.String.LPad("","0",16,V.Local.shold)
+	f.Intrinsic.String.Concat(v.Global.sBuildRotr,v.Local.shold,v.Global.sBuildRotr)
+	
+	'Signoff User
+	F.Intrinsic.String.RPad(""," ",8,V.Local.shold)
+	F.Intrinsic.String.Left(V.Local.shold,8,V.Local.shold)
+	f.Intrinsic.String.Concat(v.Global.sBuildRotr,v.Local.shold,v.Global.sBuildRotr)
+	
+	'Signoff Type
+	F.Intrinsic.String.RPad(""," ",1,V.Local.shold)
+	F.Intrinsic.String.Left(V.Local.shold,1,V.Local.shold)
+	f.Intrinsic.String.Concat(v.Global.sBuildRotr,v.Local.shold,v.Global.sBuildRotr)
+	
+	'Prod Line
+	F.Intrinsic.String.lpad(""," ",2,V.Local.shold)
+	f.Intrinsic.String.Concat(v.Global.sBuildRotr,v.Local.shold,v.Global.sBuildRotr)
+	
+	F.Intrinsic.String.Concat(v.Global.sBuildRotr,v.Ambient.NewLine,v.Global.sBuildRotr)	
+f.Intrinsic.Control.Next(v.Local.i)
+
+V.Local.sFileName.Declare(string)
+V.Local.sfiledir.Declare(STRING)
+'Bring string into file
+V.Local.sfilename.Set("ROUTERHD.TXT")
+
+F.Intrinsic.String.Concat(V.Caller.FilesDir,"\",V.Local.sfilename,V.Local.sfiledir)
+F.Intrinsic.File.String2File(V.Local.sfiledir,V.Global.sBuildRotr)
+'Upload into Global Shop
+F.Global.General.CallWrapperSync(50,"UPLRTRH/A/X")
+v.Passed.REFRESH.Set(1)
+F.ODBC.Connection!con.Close
+F.Intrinsic.Control.End
+Program.Sub.cmdAdd_Click.End
+
+Program.Sub.frmQuickRouter_UnLoad.Start
+f.ODBC.Connection!con.Close
+f.Intrinsic.Control.End
+Program.Sub.frmQuickRouter_UnLoad.End
+
+Program.Sub.chkCache_Click.Start
+v.Local.sCacheFile.Declare(string)
+v.Local.bCacheFile.Declare(Boolean)
+f.Intrinsic.String.Concat(v.Caller.LocalGSSTempDir,v.Caller.CompanyCode,"_",v.Caller.User,"_RTR.xml",v.Local.sCacheFile)
+f.Intrinsic.File.Exists(v.Local.sCacheFile,v.Local.bCacheFile)
+
+f.Intrinsic.Control.If(v.Local.bCacheFile)
+	f.Intrinsic.Control.If(v.Screen.frmQuickRouter!chkCache.Value,=,0)
+		f.Intrinsic.File.DeleteFile(v.Local.sCacheFile)
+	f.Intrinsic.Control.EndIf
+f.Intrinsic.Control.else
+	'If checked, create the file
+	f.Intrinsic.Control.If(v.Screen.frmQuickRouter!chkCache.Value,=,1)
+		f.Data.DataTable.savetoxml("dtINV",0,true,v.Local.sCacheFile)	
+	f.Intrinsic.Control.Else
+		f.Intrinsic.File.DeleteFile(v.Local.sCacheFile)
+	f.Intrinsic.Control.EndIf
+f.Intrinsic.Control.EndIf
+Program.Sub.chkCache_Click.End
